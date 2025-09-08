@@ -101,7 +101,7 @@ features = ['MeanHeight(mm)', 'Julian_Cos', 'SAVI_mean', 'EVI_mean', 'NDVI_mean'
 target = 'Biomass(kg/ha)'
 
 # Ensure your data is clean and handle missing values
-X = df[features]
+X = df[features].round(4)
 y = df[target]
 
 # Split the data
@@ -116,20 +116,6 @@ preprocessor = Pipeline(steps=[
 X_train_preprocessed = preprocessor.fit_transform(X_train)
 X_test_preprocessed = preprocessor.transform(X_test)
 
-# Convert scaled arrays back to DataFrames for inspection
-X_train_preprocessed_df = pd.DataFrame(X_train_preprocessed, 
-                                       columns=features, 
-                                       index=X_train.index)
-X_test_preprocessed_df = pd.DataFrame(X_test_preprocessed, 
-                                      columns=features, 
-                                      index=X_test.index)
-
-print("\n--- Scaled Training Features (first 5 rows) ---")
-print(X_train_preprocessed_df.head())
-
-print("\n--- Scaled Testing Features (first 5 rows) ---")
-print(X_test_preprocessed_df.head())
-
 # --- Ridge regression and hyperparameter tuning ---
 param_grid = {'alpha': np.logspace(-2, 2, 10)}  # Exploring different alpha values
 ridge = Ridge()
@@ -142,7 +128,7 @@ grid_search.fit(X_train_preprocessed, y_train)
 model = grid_search.best_estimator_
 
 # Predict on test set
-y_pred = model.predict(X_test_preprocessed)
+y_pred = model.predict(X_test_preprocessed).round(0)
 
 # Evaluation Metrics
 test_mse = mean_squared_error(y_test, y_pred)
@@ -156,29 +142,6 @@ print(f"Test MSE: {test_mse:.4f}")
 print(f"Test RMSE: {test_rmse:.4f}")
 print(f"Test MAE: {test_mae:.4f}")
 print(f"Test R² Score: {test_r2:.4f}")
-
-# --- Print Ridge regression equation with feature names ---
-feature_names = X_train.columns  # assumes X_train is a DataFrame
-coefs = model.coef_
-intercept = model.intercept_
-
-eq_terms = [f"({coef:.3f} * {name})" for coef, name in zip(coefs, feature_names)]
-equation = " + ".join(eq_terms)
-equation = f"y = {intercept:.3f} + {equation}"
-
-print("\nRidge Regression Equation with Feature Names:")
-print(equation)
-
-# --- Optional: Save scaled feature sets for later inspection ---
-save_path = r"Biomass Lab work\Testbed_2025TB_Model_V1.1.1\Scaled_Features"
-os.makedirs(save_path, exist_ok=True)
-
-X_train_preprocessed_df.to_csv(os.path.join(save_path, "X_train_scaled.csv"))
-X_test_preprocessed_df.to_csv(os.path.join(save_path, "X_test_scaled.csv"))
-
-print(f"\nScaled features saved to: {save_path}")
-
-
 # In[9]:
 
 
