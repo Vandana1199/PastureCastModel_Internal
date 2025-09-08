@@ -47,7 +47,7 @@ features = ['MeanHeight(mm)', 'Julian_Cos', 'SAVI_mean', 'EVI_mean', 'NDVI_mean'
 target = 'Biomass(kg/ha)'
 
 # Ensure your data is clean and handle missing values
-X = df[features].round(3)
+X = df[features]
 y = df[target]
 
 # Split the data
