@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import pandas as pd
 import numpy as np
 import sklearn
@@ -19,43 +13,13 @@ from sklearn.linear_model import Ridge
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 
-
-# In[2]:
-
-
 df = pd.read_csv("PastureCastModel_V1.1.1.csv")
-df
-
-
-# In[ ]:
-
-
-
-
-
-# In[3]:
-
-
 df.dtypes
-
-
-# In[4]:
-
-
 df.isnull().sum()
-
-
-# In[5]:
-
 
 # Ensure the 'Date' column is in datetime format (handles mixed formats)
 df['Date'] = pd.to_datetime(df['Date'], format='mixed')
 df['Julian Date'] = df['Date'].dt.dayofyear
-df
-
-
-# In[6]:
-
 
 # 1️⃣ Define the function
 def julian_cos_encoding_from_date(df: pd.DataFrame, date_col: str, cos_JD: str = "Julian_Cos") -> pd.DataFrame:
@@ -77,24 +41,6 @@ def julian_cos_encoding_from_date(df: pd.DataFrame, date_col: str, cos_JD: str =
 # 2️⃣ Apply the function BEFORE defining your features
 df = julian_cos_encoding_from_date(df, date_col="Date")
 
-
-# In[7]:
-
-
-df.columns
-
-
-# In[8]:
-
-
-import os
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
-from sklearn.linear_model import Ridge
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 # Define the independent variables (features) and the target variable
 features = ['MeanHeight(mm)', 'Julian_Cos', 'SAVI_mean', 'EVI_mean', 'NDVI_mean', 'NDRE_mean', 'Avg_21D_SWB_frac']
@@ -142,8 +88,6 @@ print(f"Test MSE: {test_mse:.4f}")
 print(f"Test RMSE: {test_rmse:.4f}")
 print(f"Test MAE: {test_mae:.4f}")
 print(f"Test R² Score: {test_r2:.4f}")
-# In[9]:
-
 
 # Define the path ----- Change Accodingly
 save_path = r"Biomass Lab work\Testbed_2025TB_Model_V1.1.1\PastureCastModel_V1.1.1_Testing"
@@ -162,15 +106,8 @@ joblib.dump(preprocessor, scaler_file)
 print(f"Trained Ridge model saved to {model_file}")
 print(f"Scaler saved to {scaler_file}")
 
-
-# In[10]:
-
-
 shutil.copy(os.path.join(save_path, "ridge_model_aug.joblib"), "./ridge_model_aug.joblib")
 shutil.copy(os.path.join(save_path, "scaler_aug.joblib"), "./scaler_aug.joblib")
-
-
-# In[ ]:
 
 
 
